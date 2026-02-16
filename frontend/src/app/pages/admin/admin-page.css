@@ -1,0 +1,89 @@
+.admin-shell {
+  position: relative;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 34, 0.35);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  cursor: wait;
+}
+
+.loading-box {
+  border: 1px solid #a8b3c3;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.panel {
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.toolbar button.active {
+  background: #1f4c9c;
+  color: #fff;
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.two-cols {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input,
+select,
+button {
+  padding: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.success {
+  color: #0c7a2f;
+}
+
+.error {
+  color: #b00020;
+}

@@ -1,0 +1,438 @@
+<div class="admin-shell">
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-box">Procesando...</div>
+  </div>
+
+  <section class="panel">
+    <h2>Panel Admin - Mantenimiento</h2>
+    <p>Usuario: {{ currentUser?.userName }} ({{ currentUser?.userRole }})</p>
+
+    <div class="toolbar">
+      <button [class.active]="isView('transportistas')" (click)="setView('transportistas')">
+        Mantenimiento Transportistas
+      </button>
+      <button [class.active]="isView('transports')" (click)="setView('transports')">
+        Mantenimiento Transportes
+      </button>
+      <button [class.active]="isView('clients')" (click)="setView('clients')">
+        Mantenimiento Clientes
+      </button>
+      <button [class.active]="isView('categories')" (click)="setView('categories')">
+        Mantenimiento Categorias
+      </button>
+      <button [class.active]="isView('statuses')" (click)="setView('statuses')">
+        Mantenimiento Estados
+      </button>
+      <button [class.active]="isView('shipments')" (click)="setView('shipments')">
+        Mantenimiento Envios
+      </button>
+      <button [class.active]="isView('assignments')" (click)="setView('assignments')">
+        Asignaciones
+      </button>
+    </div>
+
+    <p class="success" *ngIf="lastSuccess">{{ lastSuccess }}</p>
+    <p class="error" *ngIf="lastError">{{ lastError }}</p>
+  </section>
+
+  <section class="panel" *ngIf="isView('transportistas')">
+  <h3>Crear Transportista</h3>
+  <div class="form-grid two-cols">
+    <div class="field">
+      <label for="transportistaNombre">Nombre</label>
+      <input id="transportistaNombre" [(ngModel)]="newTransportista.userName" placeholder="Nombre" />
+    </div>
+
+    <div class="field">
+      <label for="transportistaEmail">Correo</label>
+      <input id="transportistaEmail" [(ngModel)]="newTransportista.userEmail" placeholder="Email" />
+    </div>
+
+    <div class="field">
+      <label for="transportistaPassword">Contrasena</label>
+      <input
+        id="transportistaPassword"
+        [(ngModel)]="newTransportista.userPassword"
+        placeholder="Password"
+        type="password"
+      />
+    </div>
+
+    <button (click)="createTransportista()">Crear Transportista</button>
+  </div>
+
+  <h4>Transportistas actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of transportistas">
+        <td>{{ user.userName }}</td>
+        <td>{{ user.userEmail }}</td>
+        <td>{{ user.userRole }}</td>
+        <td>
+          <button *ngIf="user.id" (click)="deleteTransportista(user.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('transports')">
+  <h3>Crear Transport</h3>
+  <div class="form-grid two-cols">
+    <div class="field">
+      <label for="transportType">Tipo</label>
+      <input id="transportType" [(ngModel)]="newTransport.transportType" placeholder="Tipo" />
+    </div>
+
+    <div class="field">
+      <label for="transportCapacity">Capacidad</label>
+      <input
+        id="transportCapacity"
+        [(ngModel)]="newTransport.transportCapacity"
+        placeholder="Capacidad"
+        type="number"
+      />
+    </div>
+
+    <div class="field">
+      <label for="transportStatus">Estado</label>
+      <input id="transportStatus" [(ngModel)]="newTransport.transportStatus" placeholder="Estado" />
+    </div>
+
+    <div class="field">
+      <label for="transportLocation">Ubicacion</label>
+      <input id="transportLocation" [(ngModel)]="newTransport.transportLocation" placeholder="Ubicacion" />
+    </div>
+
+    <div class="field">
+      <label for="transportDriver">Chofer</label>
+      <input id="transportDriver" [(ngModel)]="newTransport.transportDriver" placeholder="Chofer" />
+    </div>
+
+    <div class="field">
+      <label for="transportPlate">Placa</label>
+      <input id="transportPlate" [(ngModel)]="newTransport.transportLicensePlate" placeholder="Placa" />
+    </div>
+
+    <div class="field">
+      <label for="transportCompany">Compania</label>
+      <input id="transportCompany" [(ngModel)]="newTransport.transportCompany" placeholder="Compania" />
+    </div>
+
+    <button (click)="createTransport()">Crear Transport</button>
+  </div>
+
+  <h4>Transportes actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Placa</th>
+        <th>Estado</th>
+        <th>Ubicacion</th>
+        <th>Chofer</th>
+        <th>Capacidad</th>
+        <th>Asignado a</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transport of transports">
+        <td>{{ transport.transportType }}</td>
+        <td>{{ transport.transportLicensePlate }}</td>
+        <td>{{ transport.transportStatus }}</td>
+        <td>{{ transport.transportLocation }}</td>
+        <td>{{ transport.transportDriver }}</td>
+        <td>{{ transport.transportCapacity }}</td>
+        <td>{{ userNameById(transport.transportUserId) }}</td>
+        <td>
+          <button *ngIf="transport.id" (click)="deleteTransport(transport.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('clients')">
+  <h3>Crear Client</h3>
+  <div class="form-grid two-cols">
+    <div class="field">
+      <label for="clientCode">Codigo de empresa</label>
+      <input id="clientCode" [(ngModel)]="newClient.companyCode" placeholder="Codigo" />
+    </div>
+
+    <div class="field">
+      <label for="clientCompany">Nombre de compania</label>
+      <input id="clientCompany" [(ngModel)]="newClient.companyName" placeholder="Compania" />
+    </div>
+
+    <div class="field">
+      <label for="clientAddress">Direccion</label>
+      <input id="clientAddress" [(ngModel)]="newClient.address" placeholder="Direccion" />
+    </div>
+
+    <div class="field">
+      <label for="clientContact">Contacto</label>
+      <input id="clientContact" [(ngModel)]="newClient.contactName" placeholder="Contacto" />
+    </div>
+
+    <div class="field">
+      <label for="clientEmail">Correo</label>
+      <input id="clientEmail" [(ngModel)]="newClient.email" placeholder="Email" />
+    </div>
+
+    <div class="field">
+      <label for="clientPhone">Telefono</label>
+      <input id="clientPhone" [(ngModel)]="newClient.phone" placeholder="Telefono" />
+    </div>
+
+    <button (click)="createClient()">Crear Client</button>
+  </div>
+
+  <h4>Clientes actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Codigo</th>
+        <th>Compania</th>
+        <th>Direccion</th>
+        <th>Contacto</th>
+        <th>Correo</th>
+        <th>Telefono</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let client of clients">
+        <td>{{ client.companyCode }}</td>
+        <td>{{ client.companyName }}</td>
+        <td>{{ client.address }}</td>
+        <td>{{ client.contactName }}</td>
+        <td>{{ client.email }}</td>
+        <td>{{ client.phone }}</td>
+        <td>
+          <button *ngIf="client.id" (click)="deleteClient(client.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('categories')">
+  <h3>Crear Categoria</h3>
+  <div class="form-grid">
+    <div class="field">
+      <label for="categoryName">Nombre de categoria</label>
+      <input id="categoryName" [(ngModel)]="newCategory.categoryName" placeholder="Nueva categoria" />
+    </div>
+    <button (click)="createCategory()">Crear Categoria</button>
+  </div>
+
+  <h4>Categorias actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let category of categories">
+        <td>{{ category.categoryName }}</td>
+        <td>
+          <button *ngIf="category.id" (click)="deleteCategory(category.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('statuses')">
+  <h3>Crear Estado</h3>
+  <div class="form-grid">
+    <div class="field">
+      <label for="statusName">Nombre de estado</label>
+      <input id="statusName" [(ngModel)]="newStatus.statusName" placeholder="Nuevo estado" />
+    </div>
+    <button (click)="createStatus()">Crear Estado</button>
+  </div>
+
+  <h4>Estados actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let status of statuses">
+        <td>{{ status.statusName }}</td>
+        <td>
+          <button *ngIf="status.id" (click)="deleteStatus(status.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('shipments')">
+  <h3>Crear Shipment</h3>
+  <div class="form-grid two-cols">
+    <div class="field">
+      <label for="shipmentDescription">Descripcion</label>
+      <input
+        id="shipmentDescription"
+        [(ngModel)]="newShipment.shipmentDescription"
+        placeholder="Descripcion"
+      />
+    </div>
+
+    <div class="field">
+      <label for="shipmentOrigin">Origen</label>
+      <input id="shipmentOrigin" [(ngModel)]="newShipment.shipmentOrigin" placeholder="Origen" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentDestination">Destino</label>
+      <input id="shipmentDestination" [(ngModel)]="newShipment.shipmentDestination" placeholder="Destino" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentPrice">Precio</label>
+      <input id="shipmentPrice" [(ngModel)]="newShipment.shipmentPrice" placeholder="Precio" type="number" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentWeight">Peso</label>
+      <input id="shipmentWeight" [(ngModel)]="newShipment.shipmentWeight" placeholder="Peso" type="number" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentVolume">Volumen</label>
+      <input id="shipmentVolume" [(ngModel)]="newShipment.shipmentVolume" placeholder="Volumen" type="number" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentDate">Fecha de envio</label>
+      <input id="shipmentDate" [(ngModel)]="newShipment.shipmentDate" type="date" />
+    </div>
+
+    <div class="field">
+      <label for="shipmentClient">Cliente</label>
+      <select id="shipmentClient" [(ngModel)]="newShipment.shipmentClientId">
+        <option value="">Selecciona cliente</option>
+        <option *ngFor="let client of clients" [value]="client.id">{{ client.companyName }}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="shipmentCategory">Categoria</label>
+      <select id="shipmentCategory" [(ngModel)]="newShipment.shipmentCategoryId">
+        <option value="">Selecciona categoria</option>
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.categoryName }}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="shipmentStatus">Estado</label>
+      <select id="shipmentStatus" [(ngModel)]="newShipment.shipmentStatusId">
+        <option value="">Selecciona estado</option>
+        <option *ngFor="let status of statuses" [value]="status.id">{{ status.statusName }}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="shipmentTransport">Transport</label>
+      <select id="shipmentTransport" [(ngModel)]="newShipment.shipmentTransportId">
+        <option value="">Selecciona transport</option>
+        <option *ngFor="let transport of transports" [value]="transport.id">
+          {{ transport.transportType }} - {{ transport.transportLicensePlate }}
+        </option>
+      </select>
+    </div>
+
+    <button (click)="createShipment()">Crear Shipment</button>
+  </div>
+
+  <h4>Shipments actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Descripcion</th>
+        <th>Ruta</th>
+        <th>Estado actual</th>
+        <th>Nuevo estado</th>
+        <th>Accion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let shipment of shipments">
+        <td>{{ shipment.shipmentDescription }}</td>
+        <td>{{ shipment.shipmentOrigin }} -> {{ shipment.shipmentDestination }}</td>
+        <td>{{ statusNameById(shipment.shipmentStatusId) }}</td>
+        <td>
+          <select [(ngModel)]="selectedStatusByShipment[shipment.id!]">
+            <option *ngFor="let status of statuses" [value]="status.id">{{ status.statusName }}</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="changeShipmentStatus(shipment.id!)">Cambiar</button>
+          <button *ngIf="shipment.id" (click)="deleteShipment(shipment.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+
+  <section class="panel" *ngIf="isView('assignments')">
+  <h3>Asignar Transport a Transportista</h3>
+  <div class="form-grid two-cols">
+    <div class="field">
+      <label for="assignmentTransport">Transport</label>
+      <select id="assignmentTransport" [(ngModel)]="assignment.transportId">
+        <option value="">Selecciona Transport</option>
+        <option *ngFor="let transport of transports" [value]="transport.id">
+          {{ transport.transportType }} - {{ transport.transportLicensePlate }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="assignmentUser">Transportista</label>
+      <select id="assignmentUser" [(ngModel)]="assignment.userId">
+        <option value="">Selecciona Transportista</option>
+        <option *ngFor="let user of transportistas" [value]="user.id">{{ user.userName }}</option>
+      </select>
+    </div>
+
+    <button (click)="assignTransport()">Asignar</button>
+  </div>
+
+  <h4>Asignaciones actuales</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo de transporte</th>
+        <th>Placa</th>
+        <th>Transportista asignado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transport of transports">
+        <td>{{ transport.transportType }}</td>
+        <td>{{ transport.transportLicensePlate }}</td>
+        <td>{{ userNameById(transport.transportUserId) }}</td>
+      </tr>
+    </tbody>
+  </table>
+  </section>
+</div>

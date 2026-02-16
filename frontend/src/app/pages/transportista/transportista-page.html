@@ -1,0 +1,63 @@
+<section class="panel">
+  <h2>Panel Transportista</h2>
+  <p>Usuario: {{ currentUser?.userName }}</p>
+
+  <p class="success" *ngIf="lastSuccess">{{ lastSuccess }}</p>
+  <p class="error" *ngIf="lastError">{{ lastError }}</p>
+</section>
+
+<section class="panel">
+  <h3>Transports Asignados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Placa</th>
+        <th>Estado</th>
+        <th>Ubicacion</th>
+        <th>Chofer</th>
+        <th>Compania</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transport of transports">
+        <td>{{ transport.transportType }}</td>
+        <td>{{ transport.transportLicensePlate }}</td>
+        <td>{{ transport.transportStatus }}</td>
+        <td>{{ transport.transportLocation }}</td>
+        <td>{{ transport.transportDriver }}</td>
+        <td>{{ transport.transportCompany }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h3>Shipments Asignados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Descripcion</th>
+        <th>Ruta</th>
+        <th>Estado actual</th>
+        <th>Nuevo estado</th>
+        <th>Accion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let shipment of assignedShipments">
+        <td>{{ shipment.shipmentDescription }}</td>
+        <td>{{ shipment.shipmentOrigin }} -> {{ shipment.shipmentDestination }}</td>
+        <td>{{ statusNameById(shipment.shipmentStatusId) }}</td>
+        <td>
+          <select [(ngModel)]="selectedStatusByShipment[shipment.id!]">
+            <option *ngFor="let status of statuses" [value]="status.id">{{ status.statusName }}</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="changeStatus(shipment.id!)">Cambiar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

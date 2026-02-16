@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: users
+          uri: lb://ms-users
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        - id: clients
+          uri: lb://ms-masterdata
+          predicates:
+            - Path=/api/clients/**
+          filters:
+            - StripPrefix=1
+
+        - id: categories
+          uri: lb://ms-masterdata
+          predicates:
+            - Path=/api/categories/**
+          filters:
+            - StripPrefix=1
+
+        - id: statuses
+          uri: lb://ms-masterdata
+          predicates:
+            - Path=/api/statuses/**
+          filters:
+            - StripPrefix=1
+
+        - id: transports
+          uri: lb://ms-logistics
+          predicates:
+            - Path=/api/transports/**
+          filters:
+            - StripPrefix=1
+
+        - id: shipments
+          uri: lb://ms-logistics
+          predicates:
+            - Path=/api/shipments/**
+          filters:
+            - StripPrefix=1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

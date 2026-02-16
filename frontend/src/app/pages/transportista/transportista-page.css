@@ -1,0 +1,27 @@
+.panel {
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.success {
+  color: #0c7a2f;
+}
+
+.error {
+  color: #b00020;
+}

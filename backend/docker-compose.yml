@@ -1,0 +1,137 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: daw-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cibertec
+      RABBITMQ_DEFAULT_PASS: cibertec
+    networks:
+      - daw-net
+
+  postgres-users:
+    image: postgres:16-alpine
+    container_name: daw-postgres-users
+    environment:
+      POSTGRES_DB: BD_DAW
+      POSTGRES_USER: cibertec
+      POSTGRES_PASSWORD: cibertec
+    volumes:
+      - pg-users-data:/var/lib/postgresql/data
+    networks:
+      - daw-net
+
+  postgres-masterdata:
+    image: postgres:16-alpine
+    container_name: daw-postgres-masterdata
+    environment:
+      POSTGRES_DB: BD_DAW
+      POSTGRES_USER: cibertec
+      POSTGRES_PASSWORD: cibertec
+    volumes:
+      - pg-masterdata-data:/var/lib/postgresql/data
+    networks:
+      - daw-net
+
+  postgres-logistics:
+    image: postgres:16-alpine
+    container_name: daw-postgres-logistics
+    environment:
+      POSTGRES_DB: BD_DAW
+      POSTGRES_USER: cibertec
+      POSTGRES_PASSWORD: cibertec
+    volumes:
+      - pg-logistics-data:/var/lib/postgresql/data
+    networks:
+      - daw-net
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: daw-eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - daw-net
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: daw-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - daw-net
+
+  ms-users:
+    build: ./ms-users
+    container_name: daw-ms-users
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka
+      DB_HOST: postgres-users
+      DB_PORT: 5432
+      DB_NAME: BD_DAW
+      DB_USER: cibertec
+      DB_PASSWORD: cibertec
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USER: cibertec
+      RABBIT_PASSWORD: cibertec
+    depends_on:
+      - eureka-server
+      - postgres-users
+      - rabbitmq
+    networks:
+      - daw-net
+
+  ms-masterdata:
+    build: ./ms-masterdata
+    container_name: daw-ms-masterdata
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka
+      DB_HOST: postgres-masterdata
+      DB_PORT: 5432
+      DB_NAME: BD_DAW
+      DB_USER: cibertec
+      DB_PASSWORD: cibertec
+    depends_on:
+      - eureka-server
+      - postgres-masterdata
+    networks:
+      - daw-net
+
+  ms-logistics:
+    build: ./ms-logistics
+    container_name: daw-ms-logistics
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka
+      DB_HOST: postgres-logistics
+      DB_PORT: 5432
+      DB_NAME: BD_DAW
+      DB_USER: cibertec
+      DB_PASSWORD: cibertec
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USER: cibertec
+      RABBIT_PASSWORD: cibertec
+    depends_on:
+      - eureka-server
+      - postgres-logistics
+      - rabbitmq
+      - ms-users
+      - ms-masterdata
+    networks:
+      - daw-net
+
+networks:
+  daw-net:
+    driver: bridge
+
+volumes:
+  pg-users-data:
+  pg-masterdata-data:
+  pg-logistics-data:

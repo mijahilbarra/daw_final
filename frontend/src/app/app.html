@@ -1,0 +1,38 @@
+<main class="container">
+  <h1>DAW</h1>
+
+  <section class="panel" *ngIf="currentView === 'login'">
+    <h2>Login</h2>
+    <p class="hint">Ingresa con un usuario del backend (ej: admin@daw.com).</p>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="loginEmail">Correo</label>
+        <input id="loginEmail" [(ngModel)]="loginForm.email" placeholder="Email" />
+      </div>
+      <div class="field">
+        <label for="loginPassword">Contrasena</label>
+        <input id="loginPassword" [(ngModel)]="loginForm.password" placeholder="Password" type="password" />
+      </div>
+      <button (click)="login()">Iniciar sesion</button>
+    </div>
+
+    <p class="error" *ngIf="lastError">{{ lastError }}</p>
+  </section>
+
+  <section class="panel" *ngIf="currentUser && currentView !== 'login'">
+    <p>
+      Sesion activa: <strong>{{ currentUser.userName }}</strong> ({{ currentUser.userRole }})
+    </p>
+    <button (click)="logout()">Cerrar sesion</button>
+  </section>
+
+  <app-admin-page
+    *ngIf="currentUser && currentView === 'admin-maintenance'"
+    [currentUser]="currentUser"
+  ></app-admin-page>
+  <app-transportista-page
+    *ngIf="currentUser && currentView === 'transportista'"
+    [currentUser]="currentUser"
+  ></app-transportista-page>
+</main>
