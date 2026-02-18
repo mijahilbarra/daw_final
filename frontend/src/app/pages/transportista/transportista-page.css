@@ -1,27 +1,162 @@
-.panel {
-  border: 1px solid #d7d7d7;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #fff;
+/* ── Host ───────────────────────────────────── */
+:host {
+  display: block;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: #111;
 }
 
-table {
+/* ── Banners ─────────────────────────────────── */
+.success-banner,
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.success-banner {
+  border-left: 3px solid #16a34a;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.error-banner {
+  border-left: 3px solid #c0392b;
+  background: #fdf4f4;
+  color: #c0392b;
+}
+
+.banner-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.banner-icon.ok  { border: 1.5px solid #16a34a; color: #16a34a; }
+.banner-icon.err { border: 1.5px solid #c0392b; color: #c0392b; }
+
+/* ── Secciones ───────────────────────────────── */
+.tp-section {
+  margin-bottom: 36px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-head {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.section-desc {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+/* ── Tabla ───────────────────────────────────── */
+.data-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 13px;
 }
 
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.data-table thead tr {
+  border-bottom: 1.5px solid #111;
+}
+
+.data-table th {
+  padding: 8px 12px 8px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #555;
   text-align: left;
 }
 
-.success {
-  color: #0c7a2f;
+.data-table td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #222;
+  vertical-align: middle;
 }
 
-.error {
-  color: #b00020;
+.data-table tbody tr:hover td {
+  background: #fafafa;
 }
+
+.td-action {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.td-empty {
+  color: #bbb;
+  font-size: 13px;
+  text-align: center;
+  padding: 24px 0 !important;
+}
+
+/* ── Badge ───────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #e5e5e5;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  text-transform: capitalize;
+}
+
+/* ── Select inline ───────────────────────────── */
+.select-inline {
+  padding: 5px 0;
+  font-size: 12px;
+  min-width: 130px;
+  border: none;
+  border-bottom: 1.5px solid #d0d0d0;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  color: #111;
+  transition: border-color 0.2s;
+}
+
+.select-inline:focus {
+  border-bottom-color: #111;
+}
+
+/* ── Botón actualizar ────────────────────────── */
+.btn-ghost-sm {
+  padding: 5px 10px;
+  background: transparent;
+  color: #111;
+  border: 1px solid #d0d0d0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.btn-ghost-sm:hover    { background: #f5f5f5; }
+.btn-ghost-sm:disabled { opacity: 0.35; cursor: not-allowed; }

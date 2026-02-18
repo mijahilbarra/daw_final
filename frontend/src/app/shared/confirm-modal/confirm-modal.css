@@ -1,0 +1,111 @@
+/* ── Backdrop ────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Card ────────────────────────────────────── */
+.modal-card {
+  background: #fff;
+  width: 100%;
+  max-width: 380px;
+  padding: 32px 28px 24px;
+  border: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  animation: slideUp 0.15s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Ícono ───────────────────────────────────── */
+.modal-icon {
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid #e5b4b0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c0392b;
+  margin-bottom: 4px;
+}
+
+.modal-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── Texto ───────────────────────────────────── */
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.modal-message {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Acciones ────────────────────────────────── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.btn-cancel,
+.btn-confirm {
+  flex: 1;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  border-radius: 0;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #111;
+  border: 1px solid #d0d0d0;
+}
+
+.btn-cancel:hover {
+  background: #f5f5f5;
+}
+
+.btn-confirm {
+  background: #c0392b;
+  color: #fff;
+  border: 1px solid #c0392b;
+}
+
+.btn-confirm:hover {
+  background: #a93226;
+  border-color: #a93226;
+}

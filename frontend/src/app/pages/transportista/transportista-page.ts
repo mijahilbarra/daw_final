@@ -26,11 +26,13 @@ export class TransportistaPageComponent implements OnChanges, OnDestroy {
   statuses: ShipmentStatus[] = [];
   selectedStatusByShipment: Record<string, string> = {};
 
-  lastError = '';
+  lastError   = '';
   lastSuccess = '';
+  isLoading   = false;
 
   private readonly fixedSubscriptions = new Subscription();
   private dynamicSubscriptions = new Subscription();
+  private successTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly transportFeature: TransportFeature,
@@ -55,30 +57,42 @@ export class TransportistaPageComponent implements OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.dynamicSubscriptions.unsubscribe();
     this.fixedSubscriptions.unsubscribe();
+    if (this.successTimer) clearTimeout(this.successTimer);
   }
 
   async changeStatus(shipmentId: string): Promise<void> {
     const statusId = this.selectedStatusByShipment[shipmentId];
 
     if (!statusId) {
-      this.lastError = 'Selecciona un estado.';
+      this.lastError   = 'Selecciona un estado.';
       this.lastSuccess = '';
       return;
     }
 
-    this.lastError = '';
+    this.lastError   = '';
     this.lastSuccess = '';
+    this.isLoading   = true;
 
     try {
       await this.shipmentFeature.changeStatus(shipmentId, statusId);
-      this.lastSuccess = 'Estado actualizado.';
+      this.showSuccess('Estado actualizado.');
     } catch (error) {
       this.lastError = error instanceof Error ? error.message : 'No se pudo actualizar el estado.';
+    } finally {
+      this.isLoading = false;
     }
   }
 
   statusNameById(statusId: string): string {
     return this.statuses.find((row) => row.id === statusId)?.statusName ?? statusId;
+  }
+
+  // ── Privados ───────────────────────────────────────────────
+
+  private showSuccess(message: string): void {
+    this.lastSuccess = message;
+    if (this.successTimer) clearTimeout(this.successTimer);
+    this.successTimer = setTimeout(() => { this.lastSuccess = ''; }, 4000);
   }
 
   private connectAssignedTransportStream(): void {
@@ -88,7 +102,7 @@ export class TransportistaPageComponent implements OnChanges, OnDestroy {
     const userId = this.currentUser?.id;
 
     if (!userId) {
-      this.transports = [];
+      this.transports       = [];
       this.assignedShipments = [];
       return;
     }

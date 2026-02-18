@@ -1,48 +1,328 @@
+/* ── Host ──────────────────────────────────── */
 :host {
   display: block;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: #111;
 }
 
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px;
-  font-family: Arial, sans-serif;
-  color: #1f2937;
-}
-
-.panel {
-  border: 1px solid #d7d7d7;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+/* ── Login ─────────────────────────────────── */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #fff;
 }
 
-.form-grid {
-  display: grid;
-  gap: 8px;
+.login-box {
+  width: 100%;
   max-width: 360px;
+  padding: 48px 40px;
+  border: 1px solid #e5e5e5;
+}
+
+/* Marca */
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.brand-mark {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #111;
+}
+
+.brand-desc {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e5e5;
+  margin-bottom: 28px;
+}
+
+/* Formulario */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .field {
-  display: grid;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 label {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #555;
 }
 
-input,
-button {
-  padding: 8px;
+input {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1.5px solid #d0d0d0;
+  font-size: 14px;
+  color: #111;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
 }
 
+input:focus {
+  border-bottom-color: #111;
+}
+
+input::placeholder {
+  color: #bbb;
+}
+
+.input-eye-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-eye-wrap input {
+  padding-right: 36px;
+}
+
+.btn-eye {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.btn-eye svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-eye:hover {
+  color: #111;
+}
+
+/* Botón principal */
+.btn-primary {
+  margin-top: 8px;
+  padding: 12px;
+  background: #111;
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #333;
+}
+
+.btn-primary:active {
+  background: #000;
+}
+
+.btn-primary:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hint y error */
 .hint {
-  color: #444;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #aaa;
+  line-height: 1.5;
 }
 
-.error {
-  color: #b00020;
+.error-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 11px 14px;
+  padding-right: 32px;
+  border-left: 3px solid #c0392b;
+  background: #fdf4f4;
+  overflow: hidden;
+}
+
+.error-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #c0392b;
+  color: #c0392b;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #c0392b;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.error-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.error-close:hover {
+  opacity: 1;
+}
+
+.error-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: #c0392b;
+  opacity: 0.35;
+  transform-origin: left;
+  animation: shrink 5s linear forwards;
+}
+
+@keyframes shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+/* ── App shell (autenticado) ────────────────── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 52px;
+  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.topbar-brand {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: #111;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #555;
+}
+
+.topbar-user {
+  font-weight: 600;
+  color: #111;
+}
+
+.topbar-sep {
+  color: #ccc;
+}
+
+.topbar-role {
+  text-transform: capitalize;
+  color: #888;
+}
+
+/* Botón salir */
+.btn-ghost {
+  margin-left: 8px;
+  padding: 5px 12px;
+  background: transparent;
+  color: #111;
+  border: 1px solid #d0d0d0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-ghost:hover {
+  background: #f5f5f5;
+  border-color: #aaa;
+}
+
+/* Contenido */
+.content {
+  flex: 1;
+  padding: 28px 32px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }

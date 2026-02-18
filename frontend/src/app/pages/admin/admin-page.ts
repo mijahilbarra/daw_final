@@ -12,6 +12,7 @@ import { StatusFeature } from '../../features/statuses/status.feature';
 import { ShipmentStatus } from '../../features/statuses/status.model';
 import { TransportFeature } from '../../features/transports/transport.feature';
 import { Transport } from '../../features/transports/transport.model';
+import { ConfirmModalService } from '../../shared/confirm-modal/confirm-modal.service';
 import { UserFeature } from '../../features/users/user.feature';
 import { User } from '../../features/users/user.model';
 
@@ -45,11 +46,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
   shipments: Shipment[] = [];
   selectedStatusByShipment: Record<string, string> = {};
 
-  newTransportista = {
-    userName: '',
-    userEmail: '',
-    userPassword: ''
-  };
+  newTransportista = { userName: '', userEmail: '', userPassword: '' };
 
   newTransport = {
     transportUserId: null as string | null,
@@ -71,13 +68,8 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     phone: ''
   };
 
-  newCategory = {
-    categoryName: ''
-  };
-
-  newStatus = {
-    statusName: ''
-  };
+  newCategory = { categoryName: '' };
+  newStatus   = { statusName: '' };
 
   newShipment = {
     shipmentCategoryId: '',
@@ -93,15 +85,13 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     shipmentTransportId: ''
   };
 
-  assignment = {
-    transportId: '',
-    userId: ''
-  };
+  assignment = { transportId: '', userId: '' };
 
-  lastError = '';
+  lastError   = '';
   lastSuccess = '';
 
   private readonly subscriptions = new Subscription();
+  private successTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly userFeature: UserFeature,
@@ -109,7 +99,8 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     private readonly clientFeature: ClientFeature,
     private readonly categoryFeature: CategoryFeature,
     private readonly statusFeature: StatusFeature,
-    private readonly shipmentFeature: ShipmentFeature
+    private readonly shipmentFeature: ShipmentFeature,
+    private readonly confirmSvc: ConfirmModalService
   ) {}
 
   ngOnInit(): void {
@@ -128,7 +119,10 @@ export class AdminPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    if (this.successTimer) clearTimeout(this.successTimer);
   }
+
+  // ── Crear ──────────────────────────────────────────────────
 
   async createTransportista(): Promise<void> {
     await this.runMutation(async () => {
@@ -138,7 +132,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
         this.newTransportista.userPassword
       );
       this.newTransportista = { userName: '', userEmail: '', userPassword: '' };
-      this.lastSuccess = 'Transportista creado.';
+      this.showSuccess('Transportista creado.');
     });
   }
 
@@ -155,22 +149,15 @@ export class AdminPageComponent implements OnInit, OnDestroy {
         transportLicensePlate: '',
         transportCompany: ''
       };
-      this.lastSuccess = 'Transporte creado.';
+      this.showSuccess('Transporte creado.');
     });
   }
 
   async createClient(): Promise<void> {
     await this.runMutation(async () => {
       await this.clientFeature.create(this.newClient);
-      this.newClient = {
-        companyCode: '',
-        companyName: '',
-        address: '',
-        contactName: '',
-        email: '',
-        phone: ''
-      };
-      this.lastSuccess = 'Cliente creado.';
+      this.newClient = { companyCode: '', companyName: '', address: '', contactName: '', email: '', phone: '' };
+      this.showSuccess('Cliente creado.');
     });
   }
 
@@ -178,7 +165,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     await this.runMutation(async () => {
       await this.categoryFeature.create(this.newCategory);
       this.newCategory = { categoryName: '' };
-      this.lastSuccess = 'Categoria creada.';
+      this.showSuccess('Categoria creada.');
     });
   }
 
@@ -186,7 +173,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     await this.runMutation(async () => {
       await this.statusFeature.create(this.newStatus);
       this.newStatus = { statusName: '' };
-      this.lastSuccess = 'Estado creado.';
+      this.showSuccess('Estado creado.');
     });
   }
 
@@ -206,9 +193,11 @@ export class AdminPageComponent implements OnInit, OnDestroy {
         shipmentClientId: '',
         shipmentTransportId: ''
       };
-      this.lastSuccess = 'Envio creado.';
+      this.showSuccess('Envio creado.');
     });
   }
+
+  // ── Asignar / cambiar estado ───────────────────────────────
 
   async assignTransport(): Promise<void> {
     if (!this.assignment.transportId || !this.assignment.userId) {
@@ -222,7 +211,7 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     try {
       await this.transportFeature.assignToUser(this.assignment.transportId, this.assignment.userId);
       this.assignment = { transportId: '', userId: '' };
-      this.lastSuccess = 'Transporte asignado.';
+      this.showSuccess('Transporte asignado.');
     } catch (error) {
       this.lastError = this.errorText(error);
     }
@@ -241,70 +230,76 @@ export class AdminPageComponent implements OnInit, OnDestroy {
 
     try {
       await this.shipmentFeature.changeStatus(shipmentId, statusId);
-      this.lastSuccess = 'Estado de envio actualizado.';
+      this.showSuccess('Estado de envio actualizado.');
     } catch (error) {
       this.lastError = this.errorText(error);
     }
   }
 
+  // ── Eliminar ───────────────────────────────────────────────
+
   async deleteTransportista(userId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar este transportista?'))) return;
     await this.runMutation(async () => {
       await this.userFeature.remove(userId);
-      this.lastSuccess = 'Transportista eliminado.';
+      this.showSuccess('Transportista eliminado.');
     });
   }
 
   async deleteTransport(transportId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar este transporte?'))) return;
     await this.runMutation(async () => {
       await this.transportFeature.remove(transportId);
-      this.lastSuccess = 'Transporte eliminado.';
+      this.showSuccess('Transporte eliminado.');
     });
   }
 
   async deleteClient(clientId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar este cliente?'))) return;
     await this.runMutation(async () => {
       await this.clientFeature.remove(clientId);
-      this.lastSuccess = 'Cliente eliminado.';
+      this.showSuccess('Cliente eliminado.');
     });
   }
 
   async deleteCategory(categoryId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar esta categoría?'))) return;
     await this.runMutation(async () => {
       await this.categoryFeature.remove(categoryId);
-      this.lastSuccess = 'Categoria eliminada.';
+      this.showSuccess('Categoria eliminada.');
     });
   }
 
   async deleteStatus(statusId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar este estado?'))) return;
     await this.runMutation(async () => {
       await this.statusFeature.remove(statusId);
-      this.lastSuccess = 'Estado eliminado.';
+      this.showSuccess('Estado eliminado.');
     });
   }
 
   async deleteShipment(shipmentId: string): Promise<void> {
+    if (!(await this.confirmSvc.confirm('¿Eliminar este envío?'))) return;
     await this.runMutation(async () => {
       await this.shipmentFeature.remove(shipmentId);
-      this.lastSuccess = 'Envio eliminado.';
+      this.showSuccess('Envio eliminado.');
     });
   }
+
+  // ── Helpers públicos ───────────────────────────────────────
 
   statusNameById(statusId: string): string {
     return this.statuses.find((row) => row.id === statusId)?.statusName ?? statusId;
   }
 
   userNameById(userId: string | null): string {
-    if (!userId) {
-      return 'Sin asignar';
-    }
-
+    if (!userId) return 'Sin asignar';
     return this.transportistas.find((row) => row.id === userId)?.userName ?? 'No encontrado';
   }
 
   setView(view: MaintenanceView): void {
-    if (this.isLoading) {
-      return;
-    }
+    if (this.isLoading) return;
+    this.clearMessages();
     this.selectedView = view;
   }
 
@@ -312,15 +307,22 @@ export class AdminPageComponent implements OnInit, OnDestroy {
     return this.selectedView === view;
   }
 
+  // ── Privados ───────────────────────────────────────────────
+
+  private showSuccess(message: string): void {
+    this.lastSuccess = message;
+    if (this.successTimer) clearTimeout(this.successTimer);
+    this.successTimer = setTimeout(() => { this.lastSuccess = ''; }, 4000);
+  }
+
   private clearMessages(): void {
     this.lastError = '';
     this.lastSuccess = '';
+    if (this.successTimer) clearTimeout(this.successTimer);
   }
 
   private async runMutation(task: () => Promise<void>): Promise<void> {
-    if (this.isLoading) {
-      return;
-    }
+    if (this.isLoading) return;
 
     this.clearMessages();
     this.isLoading = true;
@@ -345,15 +347,10 @@ export class AdminPageComponent implements OnInit, OnDestroy {
 
   private syncSelectedStatusMap(): void {
     const next: Record<string, string> = {};
-
     this.shipments.forEach((row) => {
-      if (!row.id) {
-        return;
-      }
-
+      if (!row.id) return;
       next[row.id] = this.selectedStatusByShipment[row.id] ?? row.shipmentStatusId;
     });
-
     this.selectedStatusByShipment = next;
   }
 

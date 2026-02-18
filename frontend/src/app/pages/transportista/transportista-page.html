@@ -1,63 +1,85 @@
-<section class="panel">
-  <h2>Panel Transportista</h2>
-  <p>Usuario: {{ currentUser?.userName }}</p>
+<div class="transportista-shell">
 
-  <p class="success" *ngIf="lastSuccess">{{ lastSuccess }}</p>
-  <p class="error" *ngIf="lastError">{{ lastError }}</p>
-</section>
+  <!-- Mensajes -->
+  <div class="success-banner" *ngIf="lastSuccess">
+    <span class="banner-icon ok">✓</span>
+    <span>{{ lastSuccess }}</span>
+  </div>
+  <div class="error-banner" *ngIf="lastError">
+    <span class="banner-icon err">!</span>
+    <span>{{ lastError }}</span>
+  </div>
 
-<section class="panel">
-  <h3>Transports Asignados</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Tipo</th>
-        <th>Placa</th>
-        <th>Estado</th>
-        <th>Ubicacion</th>
-        <th>Chofer</th>
-        <th>Compania</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let transport of transports">
-        <td>{{ transport.transportType }}</td>
-        <td>{{ transport.transportLicensePlate }}</td>
-        <td>{{ transport.transportStatus }}</td>
-        <td>{{ transport.transportLocation }}</td>
-        <td>{{ transport.transportDriver }}</td>
-        <td>{{ transport.transportCompany }}</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
+  <!-- ── Transportes asignados ───────────────────────────── -->
+  <section class="tp-section">
+    <div class="section-head">
+      <h2 class="section-title">Transportes asignados</h2>
+      <p class="section-desc">Vehículos asociados a tu cuenta.</p>
+    </div>
 
-<section class="panel">
-  <h3>Shipments Asignados</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Descripcion</th>
-        <th>Ruta</th>
-        <th>Estado actual</th>
-        <th>Nuevo estado</th>
-        <th>Accion</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let shipment of assignedShipments">
-        <td>{{ shipment.shipmentDescription }}</td>
-        <td>{{ shipment.shipmentOrigin }} -> {{ shipment.shipmentDestination }}</td>
-        <td>{{ statusNameById(shipment.shipmentStatusId) }}</td>
-        <td>
-          <select [(ngModel)]="selectedStatusByShipment[shipment.id!]">
-            <option *ngFor="let status of statuses" [value]="status.id">{{ status.statusName }}</option>
-          </select>
-        </td>
-        <td>
-          <button (click)="changeStatus(shipment.id!)">Cambiar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</section>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Placa</th>
+          <th>Chofer</th>
+          <th>Compañía</th>
+          <th>Ubicación</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transport of transports">
+          <td>{{ transport.transportType }}</td>
+          <td>{{ transport.transportLicensePlate }}</td>
+          <td>{{ transport.transportDriver }}</td>
+          <td>{{ transport.transportCompany }}</td>
+          <td>{{ transport.transportLocation }}</td>
+          <td><span class="badge">{{ transport.transportStatus }}</span></td>
+        </tr>
+        <tr *ngIf="transports.length === 0">
+          <td colspan="6" class="td-empty">Sin transportes asignados</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── Envíos asignados ────────────────────────────────── -->
+  <section class="tp-section">
+    <div class="section-head">
+      <h2 class="section-title">Envíos asignados</h2>
+      <p class="section-desc">Actualiza el estado de cada envío a tu cargo.</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Ruta</th>
+          <th>Estado actual</th>
+          <th>Nuevo estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let shipment of assignedShipments">
+          <td>{{ shipment.shipmentDescription }}</td>
+          <td>{{ shipment.shipmentOrigin }} → {{ shipment.shipmentDestination }}</td>
+          <td><span class="badge">{{ statusNameById(shipment.shipmentStatusId) }}</span></td>
+          <td>
+            <select class="select-inline" [(ngModel)]="selectedStatusByShipment[shipment.id!]">
+              <option *ngFor="let status of statuses" [value]="status.id">{{ status.statusName }}</option>
+            </select>
+          </td>
+          <td class="td-action">
+            <button class="btn-ghost-sm" (click)="changeStatus(shipment.id!)" [disabled]="isLoading">Actualizar</button>
+          </td>
+        </tr>
+        <tr *ngIf="assignedShipments.length === 0">
+          <td colspan="5" class="td-empty">Sin envíos asignados</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>

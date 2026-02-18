@@ -1,12 +1,15 @@
-.admin-shell {
-  position: relative;
+/* ── Host ───────────────────────────────────── */
+:host {
+  display: block;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: #111;
 }
 
+/* ── Loading overlay ────────────────────────── */
 .loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 26, 34, 0.35);
-  backdrop-filter: blur(2px);
+  background: rgba(255, 255, 255, 0.75);
   z-index: 999;
   display: grid;
   place-items: center;
@@ -14,76 +17,300 @@
 }
 
 .loading-box {
-  border: 1px solid #a8b3c3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border: 1px solid #e5e5e5;
   background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
+  font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.3px;
 }
 
-.panel {
-  border: 1px solid #d7d7d7;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #fff;
+.loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #d0d0d0;
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
 }
 
-.toolbar {
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Tabs de navegación ─────────────────────── */
+.admin-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0;
+  gap: 0;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 28px;
 }
 
-.toolbar button.active {
-  background: #1f4c9c;
-  color: #fff;
+.nav-tab {
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
 }
 
+.nav-tab:hover {
+  color: #111;
+}
+
+.nav-tab.active {
+  color: #111;
+  font-weight: 700;
+  border-bottom-color: #111;
+}
+
+/* ── Banners ─────────────────────────────────── */
+.success-banner,
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.success-banner {
+  border-left: 3px solid #16a34a;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.error-banner {
+  border-left: 3px solid #c0392b;
+  background: #fdf4f4;
+  color: #c0392b;
+}
+
+.banner-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.banner-icon.ok  { border: 1.5px solid #16a34a; color: #16a34a; }
+.banner-icon.err { border: 1.5px solid #c0392b; color: #c0392b; }
+
+/* ── Sección ─────────────────────────────────── */
+.admin-section {
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-head {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.section-desc {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 16px;
+}
+
+/* ── Formulario ──────────────────────────────── */
 .form-grid {
   display: grid;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 16px 20px;
+  margin-bottom: 28px;
+  align-items: end;
 }
 
 .two-cols {
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.narrow {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  max-width: 640px;
 }
 
 .field {
-  display: grid;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 label {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #555;
 }
 
 input,
-select,
-button {
-  padding: 8px;
+select {
+  width: 100%;
+  padding: 9px 0;
+  border: none;
+  border-bottom: 1.5px solid #d0d0d0;
+  font-size: 13px;
+  color: #111;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
 }
 
-table {
+input:focus,
+select:focus {
+  border-bottom-color: #111;
+}
+
+input::placeholder {
+  color: #bbb;
+}
+
+.form-action {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* ── Botones ─────────────────────────────────── */
+.btn-primary {
+  padding: 9px 18px;
+  background: #111;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover            { background: #333; }
+.btn-primary:active           { background: #000; }
+.btn-primary:disabled         { background: #aaa; cursor: not-allowed; }
+
+.btn-danger {
+  padding: 5px 10px;
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid #e5b4b0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-danger:hover    { background: #fdf4f4; border-color: #c0392b; }
+.btn-danger:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-ghost-sm {
+  padding: 5px 10px;
+  background: transparent;
+  color: #111;
+  border: 1px solid #d0d0d0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  margin-right: 6px;
+}
+
+.btn-ghost-sm:hover    { background: #f5f5f5; }
+.btn-ghost-sm:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── Tabla ───────────────────────────────────── */
+.data-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 13px;
 }
 
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.data-table thead tr {
+  border-bottom: 1.5px solid #111;
+}
+
+.data-table th {
+  padding: 8px 12px 8px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #555;
   text-align: left;
 }
 
-.success {
-  color: #0c7a2f;
+.data-table td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #222;
+  vertical-align: middle;
 }
 
-.error {
-  color: #b00020;
+.data-table tbody tr:hover td {
+  background: #fafafa;
+}
+
+.td-action {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.td-empty {
+  color: #bbb;
+  font-size: 13px;
+  text-align: center;
+  padding: 24px 0 !important;
+}
+
+/* ── Badge ───────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #e5e5e5;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  text-transform: capitalize;
+}
+
+/* ── Select inline (tabla shipments) ────────── */
+.select-inline {
+  padding: 5px 0;
+  font-size: 12px;
+  min-width: 130px;
 }
